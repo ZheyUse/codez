@@ -1,0 +1,11 @@
+[build]
+  publish = "static-export/public"
+  command = "echo 'No build needed; static-export/public contains prebuilt files'"
+
+[[redirects]]
+[[redirects]]
+  from = "/**"
+  to = "/index.html"
+  status = 200
+  # do not force: allow existing static files (css/js/img/build) to be served
+  force = false
