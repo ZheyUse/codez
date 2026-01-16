@@ -1,0 +1,6 @@
+﻿<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#0a0a0a"/>
+  <rect x="50" y="50" width="700" height="500" fill="#111" stroke="#9bca3d" stroke-width="2" rx="10"/>
+  <text x="400" y="320" font-family="Arial, sans-serif" font-size="48" fill="#9bca3d" text-anchor="middle" font-weight="bold">dental</text>
+  <text x="400" y="360" font-family="Arial, sans-serif" font-size="20" fill="#666" text-anchor="middle">Project Screenshot</text>
+</svg>
