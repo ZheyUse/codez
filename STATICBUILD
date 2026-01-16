@@ -1,6 +1,16 @@
 # STATICBUILD
 
-Use this exact text to ask the assistant to create a static export (snapshot) of the site and produce a ZIP ready for upload to a static host.
+Use this template when you want the assistant to create a static export (snapshot) and ZIP ready for a static host.
+
+Quick summary of what the assistant will do when you paste the minimal prompt below:
+- Install and build the frontend (`npm ci` + `npm run build`).
+- Start a local PHP server serving `public/` (default: `php -S 127.0.0.1:8000 -t public`).
+- Render requested routes and save their final HTML into `static-export/` (default route: `/`).
+- Copy the *contents* of `public/` into `static-export/` root (so `/build`, `/css`, `/js`, `/img` are at the root of the export).
+- Optionally rewrite absolute (`/path`) asset URLs in the saved HTML to relative paths so the export works when served from a subfolder or Netlify.
+- Add a Netlify `_redirects` file if requested and remove PHP files and `.htaccess`.
+- Create a ZIP (`codez-static.zip` by default) containing `static-export/`.
+- Never include `.env` or `vendor/` in the ZIP.
 
 ---
 Minimal (paste as-is):
@@ -9,20 +19,23 @@ Please build frontend and create a static site ZIP:
 1) Run `npm ci` and `npm run build` in project root `codez`.
 2) Start a local PHP server serving `public` on `127.0.0.1:8000` (use `php -S 127.0.0.1:8000 -t public`).
 3) Fetch/render these routes: `/` (and optionally list other routes: `/projects`, `/services`).
-4) Save rendered HTML into `static-export/`, copy the entire `public/` folder into `static-export/`.
-5) Create ZIP `codez-static.zip` at project root containing `static-export/`.
-6) Do NOT include `.env` or `vendor/` in the ZIP.
-Return the full path to the ZIP and a short summary of included files.
+4) Save rendered HTML into `static-export/`, copy the entire *contents* of `public/` into `static-export/` root.
+5) Re-write absolute asset URLs to relative (so `/build/...` becomes `build/...`) — set `rewrite_absolute: yes` if you want this.
+6) Remove `index.php`, `.htaccess`, `.env` and `vendor/` from the export.
+7) Add Netlify `_redirects` with `/* /index.html 200` when appropriate.
+8) Create ZIP `codez-static.zip` at project root containing `static-export/`.
+9) Return the full path to the ZIP and a short summary of included files.
 
 ---
-Advanced (with options to pass):
+Advanced (options you can pass — paste exactly as shown):
 
-Please create a static export and zip with these options:
-- `routes`: comma-separated list of routes to render (default: `/`).
-- `server`: command to start server (default: `php -S 127.0.0.1:8000 -t public`).
-- `assets`: list of `public` subfolders to include (default: `build, css, js, img`).
-- `output`: output ZIP path/name (default: `codez-static.zip`).
-- `rewrite_absolute`: yes/no — rewrite absolute URLs to relative (default: no).
+Create static export with these options:
+- routes: `/ , /projects, /services`
+- server: `php -S 127.0.0.1:8000 -t public`
+- assets: `build, css, js, img` (subfolders from `public/` to copy)
+- output: `codez-static.zip`
+- rewrite_absolute: yes
+- add_netlify_redirect: yes
 
 Example advanced prompt (paste as-is):
 
@@ -32,14 +45,21 @@ Create static export with these options:
 - assets: `build, css, js, img`
 - output: `codez-static.zip`
 - rewrite_absolute: yes
+- add_netlify_redirect: yes
 
 Run the same steps as the Minimal flow. Return the ZIP path and a brief list of files inside the ZIP.
 
 ---
-Notes and cautions:
-- The assistant will NOT include `.env` or the `vendor/` directory in the static ZIP for security and size reasons — set environment variables on the host instead.
-- A static export disables all server-side features (forms, DB-driven pages, auth). Use a full Laravel deploy for dynamic server behavior.
-- If you need multiple pages, list them in `routes` so the assistant will fetch and include them in the export.
+Implementation notes (what the assistant will do automatically):
+- The assistant will NOT include `.env` or `vendor/` in the ZIP.
+- By default the assistant will rewrite absolute asset URLs to relative in saved HTML when `rewrite_absolute: yes` is present to avoid broken `/`-root references.
+- The assistant will copy the *contents* of `public/` into the root of `static-export/` so paths like `build/assets/...` are available at the site root.
+- For Netlify-friendly exports the assistant will add a `_redirects` file containing `/* /index.html 200` when `add_netlify_redirect: yes`.
+
+---
+Troubleshooting tips:
+- If styles or scripts look missing on the deployed site, ensure Netlify was given the extracted contents of `static-export/` (not the ZIP file itself), or use the Netlify UI "Deploy site" by dragging the folder contents.
+- If you still see missing assets after deployment, paste the Netlify site URL or deploy logs and I'll inspect network errors and fix asset paths.
 
 ---
 Local commands the assistant may run (for reference):
@@ -49,8 +69,11 @@ cd codez
 npm ci
 npm run build
 php -S 127.0.0.1:8000 -t public
-# then fetch pages and copy public/ into static-export/
-# finally zip: codez-static.zip
+# fetch pages: curl/http client to save /, /projects, /services
+# copy public/ contents into static-export/
+# rewrite absolute URLs to relative when requested
+# add _redirects
+# zip: codez-static.zip
 ```
 
-Place this `STATICBUILD` file at the repo root and paste its contents as your prompt when you want an automated static export.
+Paste the Minimal block when you want a fast export, or use the Advanced block to pass options. The assistant will follow the options exactly and return the ZIP path and a short file summary.

@@ -3,6 +3,7 @@
   command = "echo 'No build needed; static-export/public contains prebuilt files'"
 
 [[redirects]]
+[[redirects]]
   from = "/**"
   to = "/index.html"
   status = 200
