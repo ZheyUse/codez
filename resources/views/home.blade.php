@@ -288,7 +288,12 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number" data-count="{{ rtrim($stats['projects'], '+') }}">0</div>
+                <div class="stat-number" data-count="{{ rtrim($stats['projects'], '+') }}">
+                    <span class="value">0</span>
+                    @if(strpos($stats['projects'], '+') !== false)
+                        <span class="plus">+</span>
+                    @endif
+                </div>
                 <div class="stat-label">Projects Launched</div>
             </div>
             <div class="stat-card">
@@ -300,7 +305,12 @@
                 <div class="stat-label">Years in GFX</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" data-count="{{ rtrim($stats['clients'], '+') }}">0</div>
+                <div class="stat-number" data-count="{{ rtrim($stats['clients'], '+') }}">
+                    <span class="value">0</span>
+                    @if(strpos($stats['clients'], '+') !== false)
+                        <span class="plus">+</span>
+                    @endif
+                </div>
                 <div class="stat-label">Happy Clients</div>
             </div>
         </div>
@@ -432,7 +442,7 @@
     </div>
 </section>
 
-<!-- Projects Section (horizontal scroll cards) -->
+<!-- Projects Section -->
 <section class="projects" id="projects">
     <div class="container">
         <div class="section-header">
@@ -440,377 +450,329 @@
             <h2 class="section-title">Featured Projects</h2>
         </div>
 
-        <div class="card-container" role="region" aria-label="Featured projects" tabindex="0">
+        <!-- Project Filter Navigation -->
+        <div class="project-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="app">App Dev.</button>
+            <button class="filter-btn" data-filter="web">Web Dev.</button>
+            <button class="filter-btn" data-filter="software">Software Dev.</button>
+            <button class="filter-btn" data-filter="iot">IoT</button>
+        </div>
+
+        @php
+            $demoMap = [];
+            $demoJsonPath = public_path('img/projects/previews/demos.json');
+            if (file_exists($demoJsonPath)) {
+                try {
+                    $demoMap = json_decode(file_get_contents($demoJsonPath), true) ?? [];
+                } catch (\Exception $e) {
+                    $demoMap = [];
+                }
+            }
+        @endphp
+
+        <div class="projects-grid" role="region" aria-label="Featured projects">
             <!-- ExamLock -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">ExamLock</h2>
-                </header>
-                <div class="article-desc">A powerful system that detects cheating during exams by locking the exam interface. Equipped with security features such as LockDown, anti-screenshot/share-screen/recording protection, copy-and-paste blocking, and more.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-categories="app,web" data-demo-url="{{ $demoMap['examlock'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/examlock.png')) ? asset('img/projects/previews/examlock.png') : asset('img/projects/examlock.jpg') }}" alt="ExamLock Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="badge badge-app">App</span>
+                        <span class="badge badge-web">Web</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">ExamLock</h3>
+                    <p class="project-description">A powerful system that detects cheating during exams by locking the exam interface.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">Firebase</span>
+                    </div>
                 </div>
             </div>
 
             <!-- HitchMe -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">HitchMe</h2>
-                </header>
-                <div class="article-desc">A student-driven community app that lets students hitch rides with others. Integrates Mapbox API for map rendering and polyline route guidance.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-categories="app,web" data-demo-url="{{ $demoMap['hitchme'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/hitchme.png')) ? asset('img/projects/previews/hitchme.png') : asset('img/projects/hitchme.jpg') }}" alt="HitchMe Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="badge badge-app">App</span>
+                        <span class="badge badge-web">Web</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">HitchMe</h3>
+                    <p class="project-description">A student-driven community app that lets students hitch rides with others.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">Mapbox</span>
+                    </div>
                 </div>
             </div>
 
             <!-- BH Finder -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">BH Finder</h2>
-                </header>
-                <div class="article-desc">A school project that helps the community find suitable boarding homes with search filters and direct contact to boarding house owners.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-category="web" data-demo-url="{{ $demoMap['bhfinder'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/bhfinder.png')) ? asset('img/projects/previews/bhfinder.png') : asset('img/projects/bhfinder.jpg') }}" alt="BH Finder Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Web App</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>PHP</div>
-                    <div>MySQL</div>
+                <div class="project-content">
+                    <h3 class="project-title">BH Finder</h3>
+                    <p class="project-description">Helps the community find suitable boarding homes with search filters.</p>
+                    <div class="project-tags">
+                        <span class="tag">PHP</span>
+                        <span class="tag">MySQL</span>
+                    </div>
                 </div>
             </div>
 
             <!-- ComicZ -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">ComicZ</h2>
-                </header>
-                <div class="article-desc">An Android manga-reading app using web scraping. Features a voucher system, countdown timers, and multiple servers for high availability.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-categories="app,web" data-demo-url="{{ $demoMap['comicz'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/comicz.png')) ? asset('img/projects/previews/comicz.png') : asset('img/projects/comicz.jpg') }}" alt="ComicZ Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="badge badge-app">App</span>
+                        <span class="badge badge-web">Web</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>REST API</div>
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
+                <div class="project-content">
+                    <h3 class="project-title">ComicZ</h3>
+                    <p class="project-description">An Android manga-reading app using web scraping with multiple servers.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">REST API</span>
+                    </div>
                 </div>
             </div>
 
             <!-- FrameIt -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">FrameIt</h2>
-                </header>
-                <div class="article-desc">An easy image framing tool for users who prefer not to use commercial services like Twibbonize or Canva. Simplifies creating shareable framed images.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-category="web" data-demo-url="{{ $demoMap['frameit'] ?? 'https://frameit-here.netlify.app/' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/frameit.png')) ? asset('img/projects/previews/frameit.png') : asset('img/projects/frameit.jpg') }}" alt="FrameIt Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Web App</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Laravel</div>
-                    <div>REST API</div>
+                <div class="project-content">
+                    <h3 class="project-title">FrameIt</h3>
+                    <p class="project-description">An easy image framing tool that simplifies creating shareable framed images.</p>
+                    <div class="project-tags">
+                        <span class="tag">Laravel</span>
+                        <span class="tag">REST API</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Comelec iVOTE System -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">Comelec iVOTE System</h2>
-                </header>
-                <div class="article-desc">An Android app for CTU students to vote for SSG leaders.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-categories="app,web" data-demo-url="{{ $demoMap['ivote'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/ivote.png')) ? asset('img/projects/previews/ivote.png') : asset('img/projects/ivote.jpg') }}" alt="iVOTE Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="badge badge-app">App</span>
+                        <span class="badge badge-web">Web</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Kotlin</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">Comelec iVOTE System</h3>
+                    <p class="project-description">An Android app for CTU students to vote for SSG leaders.</p>
+                    <div class="project-tags">
+                        <span class="tag">Kotlin</span>
+                        <span class="tag">Firebase</span>
+                    </div>
                 </div>
             </div>
 
             <!-- StudyBuddy -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">StudyBuddy</h2>
-                </header>
-                <div class="article-desc">A web app using Gemini API to help students study through looped question-and-answer exercises.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-category="web" data-demo-url="{{ $demoMap['studybuddy'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/studybuddy.png')) ? asset('img/projects/previews/studybuddy.png') : asset('img/projects/studybuddy.jpg') }}" alt="StudyBuddy Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Web App</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
-                    <div>REST API</div>
+                <div class="project-content">
+                    <h3 class="project-title">StudyBuddy</h3>
+                    <p class="project-description">A web app using Gemini API to help students study through Q&A exercises.</p>
+                    <div class="project-tags">
+                        <span class="tag">JavaScript</span>
+                        <span class="tag">REST API</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Motorpool Inventory System -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">Motorpool Inventory System</h2>
-                </header>
-                <div class="article-desc">An inventory management system for company vehicle fleets.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-categories="app,web" data-demo-url="{{ $demoMap['motorpool'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/motorpool.png')) ? asset('img/projects/previews/motorpool.png') : asset('img/projects/motorpool.jpg') }}" alt="Motorpool Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="badge badge-app">App</span>
+                        <span class="badge badge-web">Web</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">Motorpool Inventory System</h3>
+                    <p class="project-description">An inventory management system for company vehicle fleets.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">Firebase</span>
+                    </div>
                 </div>
             </div>
 
             <!-- PigFeeder -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">PigFeeder</h2>
-                </header>
-                <div class="article-desc">An IoT project remotely controlled via an app with an automatic scheduling system that handles feeding tasks automatically.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="iot">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/pigfeeder.jpg') }}" alt="PigFeeder Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">IoT</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
-                    <div>C</div>
-                    <div>C++</div>
+                <div class="project-content">
+                    <h3 class="project-title">PigFeeder</h3>
+                    <p class="project-description">IoT project with automatic scheduling system for remote feeding tasks.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">C++</span>
+                    </div>
                 </div>
             </div>
 
             <!-- PetInc -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">PetInc</h2>
-                </header>
-                <div class="article-desc">An IoT project for pet incubation with automatic offline mode, solar panel activation, and remote control via a mobile app.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="iot">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/petinc.jpg') }}" alt="PetInc Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">IoT</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
-                    <div>C</div>
-                    <div>C++</div>
+                <div class="project-content">
+                    <h3 class="project-title">PetInc</h3>
+                    <p class="project-description">IoT project for pet incubation with automatic offline mode and solar panel.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">C++</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Dental Care -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">Dental Care</h2>
-                </header>
-                <div class="article-desc">A dental practice management system that handles patients, bookings, records, and includes a tooth notation feature with full CRUD support.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="app">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/dental.jpg') }}" alt="Dental Care Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Mobile App</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">Dental Care</h3>
+                    <p class="project-description">Dental practice management system with tooth notation feature.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">Firebase</span>
+                    </div>
                 </div>
             </div>
 
             <!-- OnSite -->
-                <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">OnSite</h2>
-                </header>
-                <div class="article-desc">An engineering ERP app that manages project creation and assignment, attendance, inventory, progress tracking, and salary management.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="app">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/onsite.jpg') }}" alt="OnSite Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Mobile App</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
+                <div class="project-content">
+                    <h3 class="project-title">OnSite</h3>
+                    <p class="project-description">Engineering ERP app for project management, attendance, and inventory.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">Firebase</span>
+                    </div>
                 </div>
             </div>
 
             <!-- OnSite AI -->
-            <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">OnSite AI</h2>
-                </header>
-                <div class="article-desc">An AI-integrated app that helps clients by generating answers, images, and handling inquiries using Gemini. Built with Flutter and integrating Firebase and REST APIs.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="app">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/onsite-ai.jpg') }}" alt="OnSite AI Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Mobile App</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
-                    <div>REST API</div>
+                <div class="project-content">
+                    <h3 class="project-title">OnSite AI</h3>
+                    <p class="project-description">AI-integrated app using Gemini for generating answers and images.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">REST API</span>
+                    </div>
                 </div>
             </div>
 
             <!-- OnSite Messenger -->
-            <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">OnSite Messenger</h2>
-                </header>
-                <div class="article-desc">A powerful messenger app for client members, featuring built-in OnSite AI and a mention feature for seamless communication. Built with Flutter, Firebase, and REST APIs.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card" data-category="app">
+                <div class="project-image">
+                    <img src="{{ asset('img/projects/onsite-messenger.jpg') }}" alt="OnSite Messenger Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Mobile App</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>Flutter</div>
-                    <div>Firebase</div>
-                    <div>REST API</div>
+                <div class="project-content">
+                    <h3 class="project-title">OnSite Messenger</h3>
+                    <p class="project-description">Messenger app with built-in AI and mention features for communication.</p>
+                    <div class="project-tags">
+                        <span class="tag">Flutter</span>
+                        <span class="tag">REST API</span>
+                    </div>
                 </div>
             </div>
 
             <!-- LiamLandingPage -->
-            <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">LiamLandingPage</h2>
-                </header>
-                <div class="article-desc">A recently created landing page built for a client.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-category="web" data-demo-url="{{ $demoMap['liam'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/liam.png')) ? asset('img/projects/previews/liam.png') : asset('img/projects/liam.jpg') }}" alt="Liam Landing Page Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Web Design</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>HTML</div>
-                    <div>CSS</div>
-                    <div>JS</div>
+                <div class="project-content">
+                    <h3 class="project-title">LiamLandingPage</h3>
+                    <p class="project-description">A recently created landing page built for a client.</p>
+                    <div class="project-tags">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">JS</span>
+                    </div>
                 </div>
             </div>
 
             <!-- DeathBlock -->
-            <div class="card">
-                <header class="article-header">
-                    <div>
-                        <div class="category-title">Project <span class="date">&nbsp;</span></div>
-                    </div>
-                    <h2 class="article-title">DeathBlock</h2>
-                </header>
-                <div class="article-desc">A cemetery management system for managing chambers and niches. Built with PHP and MySQL.</div>
-                <div class="author">
-                    <div class="profile"></div>
-                    <div class="info">
-                        <div class="caption">Author</div>
-                        <div class="name">CODEZ</div>
+            <div class="project-card clickable" data-category="web" data-demo-url="{{ $demoMap['deathblock'] ?? '#' }}">
+                <div class="project-image">
+                    <img src="{{ file_exists(public_path('img/projects/previews/deathblock.png')) ? asset('img/projects/previews/deathblock.png') : asset('img/projects/deathblock.jpg') }}" alt="DeathBlock Project" loading="lazy">
+                    <div class="project-overlay">
+                        <span class="project-type">Web App</span>
+                        <span class="demo-badge">Live Demo</span>
                     </div>
                 </div>
-                <div class="tags">
-                    <div>PHP</div>
-                    <div>MySQL</div>
+                <div class="project-content">
+                    <h3 class="project-title">DeathBlock</h3>
+                    <p class="project-description">A cemetery management system for managing chambers and niches.</p>
+                    <div class="project-tags">
+                        <span class="tag">PHP</span>
+                        <span class="tag">MySQL</span>
+                    </div>
                 </div>
             </div>
 

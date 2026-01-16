@@ -219,17 +219,27 @@ function initAnimations() {
             onEnter: () => {
                 const statNumbers = document.querySelectorAll('.stat-number');
                 statNumbers.forEach(stat => {
-                    const target = parseInt(stat.getAttribute('data-count'));
-                    
-                    gsap.to(stat, {
-                        textContent: target,
-                        duration: 2,
-                        ease: 'power1.out',
-                        snap: { textContent: 1 },
-                        onUpdate: function() {
-                            stat.textContent = Math.ceil(stat.textContent);
-                        }
-                    });
+                    const target = parseInt(stat.getAttribute('data-count')) || 0;
+                    const valueEl = stat.querySelector('.value');
+
+                    // If a nested .value exists animate it; otherwise fall back to animating the element's text
+                    if (valueEl) {
+                        const obj = { value: 0 };
+                        gsap.to(obj, {
+                            value: target,
+                            duration: 2,
+                            ease: 'power1.out',
+                            onUpdate: () => { valueEl.textContent = Math.ceil(obj.value); }
+                        });
+                    } else {
+                        const obj = { value: 0 };
+                        gsap.to(obj, {
+                            value: target,
+                            duration: 2,
+                            ease: 'power1.out',
+                            onUpdate: () => { stat.textContent = Math.ceil(obj.value); }
+                        });
+                    }
                 });
             },
             once: true
@@ -643,6 +653,63 @@ function initCardScroller() {
 }
 
 // ===================================
+// Project Filtering System
+// ===================================
+function initProjectFilters() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    if (!filterBtns.length || !projectCards.length) return;
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            btn.classList.add('active');
+
+            const filterValue = btn.getAttribute('data-filter');
+
+            // Filter project cards
+            projectCards.forEach(card => {
+                // Support both single `data-category` and multi `data-categories` (comma-separated)
+                const categoriesAttr = card.getAttribute('data-categories') || card.getAttribute('data-category') || '';
+                const categories = categoriesAttr.split(',').map(s => s.trim()).filter(Boolean);
+
+                if (filterValue === 'all' || categories.includes(filterValue)) {
+                    card.classList.remove('hidden');
+                    // Trigger fade-in animation
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 10);
+                } else {
+                    card.classList.add('hidden');
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                }
+            });
+        });
+    });
+}
+
+// ===================================
+// Project Card Click Handler (Web Dev Only)
+// ===================================
+function initProjectCardClicks() {
+    const clickableCards = document.querySelectorAll('.project-card.clickable');
+    
+    clickableCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const demoUrl = card.getAttribute('data-demo-url');
+            if (demoUrl && demoUrl !== '#') {
+                window.open(demoUrl, '_blank', 'noopener,noreferrer');
+            }
+        });
+    });
+}
+
+// ===================================
 // Initialize Everything on Full Load
 // ===================================
 window.addEventListener('load', () => {
@@ -656,11 +723,14 @@ window.addEventListener('load', () => {
     initPanelScrolling();
     initCardScroller();
     initProjectCardAnimations();
+    initProjectFilters();
+    initProjectCardClicks();
     
-    // Ensure panel bodies and timeline cards are scrolled to the bottom
-    // so the most recent timeline entries are visible and the scrollbar appears.
+    // Ensure only timeline blocks are scrolled to the bottom so
+    // the most recent timeline entries are visible. Do NOT auto-scroll
+    // generic about panel bodies so they show from the top by default.
     setTimeout(() => {
-        document.querySelectorAll('.about-panel .panel-body, .timeline-content').forEach(el => {
+        document.querySelectorAll('.timeline-content').forEach(el => {
             try { el.scrollTop = el.scrollHeight; } catch (e) { /* ignore */ }
         });
     }, 120);
